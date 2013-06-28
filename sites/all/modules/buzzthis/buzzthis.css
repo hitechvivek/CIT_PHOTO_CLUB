@@ -1,0 +1,13 @@
+/* $Id */
+
+/**
+ * @file
+ * Provides all the styling for the Buzz this integration.
+ */
+
+/**
+ * Styling for the button.
+ */
+.buzzbutton {
+  float: right;
+}

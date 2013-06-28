@@ -1,0 +1,45 @@
+
+#header-top {
+	height: 20px;
+}
+#header-top #slogan {
+	float: left;
+}
+#header-top #member-login {
+	float: right;
+}
+input[type=submit] {
+  padding: 3px 8px;
+}
+#nav #search-block-form input[type=text] {
+  width: 125px;
+}
+#nav #search-block-form input[type=submit] {
+  padding: 3px 4px;
+}
+#nav ul {
+ zoom: 1;
+}
+#nav ul li {
+  padding: 0px 15px;
+  line-height: 2.4em;
+  list-style: none;
+  list-style-image: none;
+}
+#nav ul li.hover ul {
+  left: 15px;
+  z-index: 4000;
+}
+#nav ul ul li a:hover,
+#nav ul ul li a,
+#nav ul ul ul li a,
+#nav ul ul ul li a:hover {
+  display: inline-block;
+}
+#nav ul li.expanded ul li.expanded a,
+#nav ul li.expanded ul li.expanded ul li.expanded a,
+#nav li.expanded ul li.expanded a:hover,
+#nav li.expanded ul li.expanded ul li.expanded a:hover {
+  display: inline-block;
+  background: transparent url(../images/ddplus.gif) no-repeat 100% 50%;
+}

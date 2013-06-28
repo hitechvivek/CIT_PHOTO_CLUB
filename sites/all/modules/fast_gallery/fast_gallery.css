@@ -1,0 +1,17 @@
+/* $Id: */
+
+.fast-gallery-image{
+  float:left;
+  width: 155px;
+  height:140px;
+  text-align:center;
+}
+
+
+.fast-gallery-image a:link, .fast-gallery-image a:visited, .fast-gallery-image a:hover {
+ text-decoration:none;
+}
+
+.fast-gallery-image a:hover img {
+  border:medium solid black;
+}

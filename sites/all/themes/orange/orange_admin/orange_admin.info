@@ -1,0 +1,26 @@
+name = Orange Admin
+description = Administration theme to go along with the Orange theme.
+version = VERSION
+core = 7.x
+engine = phptemplate
+
+; Regions
+regions[content] = Content
+regions[help] = Help
+regions[highlight] = Highlight
+regions[search] = Search
+
+; Features
+features[] = name
+features[] = favicon
+features[] = shortcut_icon
+
+; Stylesheets
+stylesheets[all][] = css/style-admin.css
+
+; Information added by drupal.org packaging script on 2011-04-26
+version = "7.x-1.1"
+core = "7.x"
+project = "orange"
+datestamp = "1303862216"
+

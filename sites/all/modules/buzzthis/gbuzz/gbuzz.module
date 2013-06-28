@@ -1,0 +1,94 @@
+<?php
+// $Id: gbuzz.module,v 1.1 2010/06/02 17:34:33 jasonleon Exp $
+
+function gbuzz_menu() {
+	$items = array();
+  
+  $items['admin/settings/buzzthis/oauth'] = array(
+    'title' => 'Buzzthis Oauth Setup',
+    'description' => 'Setup Buzzthis Module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('buzzthis_admin_oauth'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'gbuzz.pages.inc'
+  );
+  
+  
+  $items['gbuzz/oauth'] = array(
+    'title' => 'Google Buzz',
+    'access callback' => TRUE,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gbuzz_oauth_callback'),
+    'type' => MENU_CALLBACK,
+    'file' => 'gbuzz.pages.inc',
+  );
+  
+  $items['user/%user_category/edit/gbuzz'] = array(
+    'title' => 'Buzz accounts',
+    'page callback' => 'gbuzz_user_settings',
+    'page arguments' => array(1),
+    'access arguments' => array('add gbuzz accounts'),
+    'load arguments' => array('%map', '%index'),
+    'weight' => 10,
+    'file' => 'gbuzz.pages.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
+  
+  $items['user/%user/edit/gbuzz/global/%'] = array(
+    'title' => 'Buzz accounts',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gbuzz_user_make_global', 1, 5), 
+    'access arguments' => array('make gbuzz accounts global'),
+    'file' => 'gbuzz.pages.inc',
+    'type' => MENU_CALLBACK,  
+  );
+  
+  return $items;
+}
+/**
+ * Implementation of hook_perm() 
+ */
+function gbuzz_perm() {
+	return array('add gbuzz accounts', 'use global gbuzz account', 'make gbuzz accounts global');
+}
+ 
+/**
+ * Implementation of hook_user().
+ */
+function gbuzz_user($op, &$edit, &$account, $category = NULL) {
+  switch ($op) {
+    case 'categories':
+      return array(
+        array(
+          'name' => 'gbuzz',
+          'title' => 'Buzz accounts',
+          'weight' => 2,
+        ),
+      );
+  }
+}
+
+
+function _gbuzz_is_oauth_active() {
+  return (variable_get('gbuzz_consumer_key', '') && variable_get('gbuzz_consumer_secret', ''));
+}
+ 
+ 
+/**
+ * Implementation of hook_theme()
+ */
+function gbuzz_theme() {
+  return array(
+    'gbuzz_account_list_form' => array(
+      'arguments' => array('form' => NULL),
+    )
+  );
+}
+
+/**
+ * Implementation of hook_views_api.
+ */
+function gbuzz_views_api() {
+  return array('api' => 2);
+}

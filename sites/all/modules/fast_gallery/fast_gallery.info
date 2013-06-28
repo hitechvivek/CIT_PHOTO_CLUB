@@ -1,0 +1,14 @@
+; $Id: 
+name = Fast Gallery
+description = A very simple yet powerful folderbased gallery
+core = 7.x
+package = "Fast Gallery"
+files[] = fast_gallery.module
+files[] = fast_gallery.install
+files[] = fast_gallery.test
+; Information added by drupal.org packaging script on 2009-12-20
+version = "7.x-1.1-beta2"
+core = "7.x"
+project = "fast_gallery"
+datestamp = "1261340134"
+

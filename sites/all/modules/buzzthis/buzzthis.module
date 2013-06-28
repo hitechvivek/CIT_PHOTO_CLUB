@@ -1,0 +1,153 @@
+<?php
+// $Id: buzzthis.module,v 1.10.2.1 2010/09/19 21:40:39 jasonleon Exp $
+
+include_once dirname(__FILE__) . '/buzzthis.field.inc';
+
+/**
+ * Implementation of hook_help()
+ */
+function buzzthis_help($path, $arg) {
+  $output = NULL;
+  switch ($path) {
+    case 'admin/help#buzzthis':
+      $output = 'This modules lets you add a button that allows your website to let people share content on Google Buzz without having to leave the page.';
+    case 'admin/config/sharing/gbuzz':
+      $output = '<p>' . t('This button allows your website to let people share content on Google Buzz without having to leave the page.') . '</p>';
+      break;
+    case 'admin/config/sharing/gbuzz/node':
+      $output = '<p>' . t('Select the node types on which the Google Buzz Button will appear.') . '</p>';
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function buzzthis_menu() {
+  $items = array();
+  
+  $items['admin/config/sharing/gbuzz'] = array(
+    'title' => 'Buzzthis Settings',
+    'description' => 'Set the node types and the properties for the buzzthis button.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('buzzthis_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'buzzthis.admin.inc'
+  );
+  
+  $items['admin/config/sharing/gbuzz/buzzthis'] = array(
+    'title' => 'Buzzthis Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK
+  );
+  
+  return $items;
+}
+
+/**
+ * Implementation of hook_theme
+ */
+function buzzthis_theme() {
+  return array(
+    'buzzthis_button' => array(
+      'variables' => array('style' => array(), 'teaser' => NULL),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_permission()
+ */
+function buzzthis_permission() {
+  return array(
+    'access buzz button' => array(
+      'title' => t('Access Buzzthis Button'),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_block_info()
+ */
+function buzzthis_block_info() {
+	$blocks['buzzthis_button'] = array(
+    'info' => t('Buzzthis Button'),
+    'weight' => 0,
+  );
+  
+  $blocks['buzzthis_follow'] = array(
+    'info' => t('Follow on Google Buzz'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implementation of hook_block_view()
+ */
+function buzzthis_block_view($delta = '') {
+	$blocks = array();
+  switch ($delta) {
+  	case 'buzzthis_button':
+      $block['subject'] = t('Buzzthis'); 
+      $block['content'] = theme('buzzthis_button');
+      break;
+    case 'buzzthis_follow':
+      $block['subject'] = t('Follow on Google Buzz');
+      $block['content'] = buzzthis_follow_button();
+      break;
+     
+  }
+  return $block;
+}
+
+function buzzthis_follow_button() {
+  $profile_id = variable_get('buzzthis_profileid', '');
+  
+  if (!$profile_id) {
+    return t('Profile ID not set.');
+  }
+  drupal_add_js('http://www.google.com/buzz/api/button.js', 'external');
+  
+  $button = '<a target="_blank" title="Post on Google Buzz" class="google-buzz-button" ' .
+            'href="http://google.com/profiles/' . $profile_id . '" data-button-style="follow" ' .
+            'data-locale="' . language_default('language') . '">Follow on Buzz</a>';
+  return $button;
+
+}
+
+/**
+ * Theme function for button display
+ */
+function theme_buzzthis_button($variable) {
+  static $called = 0;
+  // Although both css and javascript are rendered only once by drupal_add_*, 
+  // Its always good to save some time :) 
+  if (!$called) {
+    $called = 1;
+    drupal_add_css(drupal_get_path('module', 'buzzthis') . '/buzzthis.css');
+    drupal_add_js('http://www.google.com/buzz/api/button.js', 'external');
+  }
+  
+  $teaser = isset($variable['teaser'])? $variable['teaser']: '';
+  
+  $style = isset($variable['style'])? $variable['style']: array();
+  $url = isset($style['url'])? $style['url']: url($_GET['q'], array('absolute' => TRUE));
+  $type = isset($style['type'])? $style['type']: 'normal-count';
+  $langcode = isset($style['langcode'])? $style['langcode']: language_default('language');
+  
+  $attributes = array(
+    'data-url' =>  $url,
+    'data-button-style' => $type,
+    'data-locale' => $langcode,
+    'class' => 'google-buzz-button',
+    'title' => t('Post on Google Buzz'),
+  );  
+
+  if ($teaser) {
+  	$attributes['data-message'] = $teaser;
+  }
+  
+  $class = 'buzzbutton buzzbutton-'. $type;
+  return '<div class="' . $class . '">' .
+    '<a href="http://www.google.com/buzz/post" ' . drupal_attributes($attributes) . '></a> </div>';
+}

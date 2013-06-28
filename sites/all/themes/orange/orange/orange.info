@@ -1,0 +1,41 @@
+name = Orange
+description = A two column layout which utilizes the Skinr module to allow for various configurations.
+version = VERSION
+core = 7.x
+engine = phptemplate
+
+; Stylesheets
+;stylesheets[all][] = css/style.css
+
+; Scripts
+scripts[] = js/orange.js
+
+; Regions
+regions[nav] = Navigation
+regions[sidebar_first] = Sidebar
+regions[content_top] = Content top
+regions[content_inner] = Content inner
+regions[content] = Content
+regions[help] = Help
+regions[highlight] = Highlight
+regions[search] = Search
+regions[node_inner] = Region within node content
+regions[content_bottom] = Content bottom
+regions[content_footer] = Footer content
+
+; Features
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = comment_user_picture
+features[] = search
+features[] = favicon
+features[] = shortcut_icon
+
+skinr[api] = 2
+; Information added by drupal.org packaging script on 2011-04-26
+version = "7.x-1.1"
+core = "7.x"
+project = "orange"
+datestamp = "1303862216"
+

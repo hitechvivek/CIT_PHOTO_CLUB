@@ -1,0 +1,114 @@
+<?php
+// $Id: gbuzz_post.module,v 1.1 2010/06/02 17:34:33 jasonleon Exp $
+
+/**
+ * Implementation of hook_menu().
+ */
+function gbuzz_post_menu() {
+  $items = array();
+  
+  $items['admin/settings/gbuzz/post'] = array(
+    'title' => 'Post',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gbuzz_post_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'gbuzz_post.pages.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3
+  );
+  return $items;
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function gbuzz_post_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['#node']) && $form['#node']->type .'_node_form' == $form_id) {
+    $type = $form['#node']->type;
+    
+//    if (!in_array($type, variable_get('gbuzz_post_node_types', array()))) {
+//      return NULL;
+//    }
+    
+    module_load_include('inc', 'gbuzz');
+    
+    if (module_exists('twitter_post')) {
+    	// Form Alter to avoid extra fieldset for each service
+    }
+    
+    $gbuzz_form = gbuzz_post_get_form();
+    
+    $form['gbuzz'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Post to Google Buzz'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+      '#tree' => TRUE,
+    );
+    $form['gbuzz']['post'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Add to Buzz'),
+      '#default_value' => (empty($form['nid']['#value'])),
+      '#id' => 'gbuzz-toggle',
+    );
+    $form['gbuzz'] += $gbuzz_form;
+   
+  }        
+}
+ 
+function gbuzz_post_get_form($account = NULL) {
+  module_load_include('inc', 'gbuzz');
+	
+  drupal_add_js(drupal_get_path('module', 'gbuzz') .'/gbuzz.js', 'module');
+  
+  if (empty($account)) {
+    global $user;
+    $account = $user;
+  }
+  
+  $accounts = gbuzz_get_accounts($account, TRUE);
+  
+  $options = array();
+  foreach ($accounts as $account) {
+    $options[$account->id] = $account->display_name;
+  }
+  
+  if (count($options) > 1) {
+    $form['account'] = array(
+      '#type' => 'select',
+      '#title' => t('Google Buzz Accounts'),
+      '#options' => $options,
+      '#multiple' => TRUE,
+      '#id' => 'gbuzz-account',
+    );
+  }
+  else {
+    $form['account'] = array(
+      '#type' => 'value',
+      '#value' => array(array_keys($options))
+    );
+  }
+  
+  return $form;
+} 
+
+function gbuzz_post_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+	switch ($op) {
+    case 'insert':
+    case 'update':
+      if (!empty($node->status) && !empty($node->gbuzz) && !empty($node->gbuzz['post'])) {
+        module_load_include('inc', 'gbuzz');
+        foreach($node->gbuzz['account'] as $google_id) {
+          try {
+            $url = url($node->path, array('absolute' => TRUE));
+            $result = gbuzz_post_article($google_id, $node->title, $url);
+            drupal_set_message(t('Successfully Posted to Buzz'));
+          }
+          catch (GbuzzException $e) {
+            drupal_set_message(t('An error occurred when posting to buzz: %code %error',
+                  array('%code' => $result->code, '%error' => $result->error)), 'warning');
+          }
+        }
+      }
+  }   
+}

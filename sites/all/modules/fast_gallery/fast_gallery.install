@@ -1,0 +1,103 @@
+<?php
+// $Id: 
+
+function fast_gallery_uninstall() {
+  variable_del('fg_storage_engine');
+  variable_del('fg_galleries');
+  variable_del('fg_folder_first');
+  variable_del('fg_sort_order');
+  variable_del('fg_sort_direction');
+}
+
+
+function fast_gallery_install() {
+  $engine = array(
+        'key' => 'default',
+        'name' => 'Default',
+        'file' => 'default.storage.inc',
+        'path' => drupal_get_path('module', 'fast_gallery') . '/storageengine',
+        'config' => 'admin/config/fast_gallery/default',
+        'config_callback' => 'fast_gallery_default_config',
+        'config_file' => 'default.config.inc',
+        'supported_files' => array('jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf'),
+       );
+  variable_set('fg_storage_engine', $engine); //save the storageengine
+  
+}
+
+function fast_gallery_schema() {
+  $schema['cache_fast_gallery'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_fast_gallery']['description'] = 'Cache for Fast Gallery Pages';
+  
+  $schema['fast_gallery_hierarchy'] = array(
+    'description' => 'store the hierarchy of folders',
+    'fields' => array(
+      'foid' => array(
+        'description' => 'Primary identifier for folders',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'folder' => array(
+        'description' => 'Folder URI',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'pid' => array(
+        'description' => 'Parent folder',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('foid'),
+  );
+  
+  $schema['fast_gallery_file'] = array(
+    'description' => 'Store the path to the files',
+    'fields' => array(
+      /*'fid' => array(
+        'type' => 'serial',
+        'description' => 'Primary identifier for files',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),*/
+      'foid' => array(
+        'description' => 'Referencing the folder',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'filename' => array(
+        'description' => 'The actual filename',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'runid' => array(
+        'description' => 'Each time the update scriped is run we give an id -> easy to delete old entries',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'filecreated' => array(
+        'description' => 'Timestamp of creation of file',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      )
+    ),
+    'primary key' => array('foid', 'filename'),
+    'foreign keys' => array(
+      'foid' => array('fast_gallery_hierarchy' => 'foid'),
+    ),
+  );
+  
+  return $schema;
+}

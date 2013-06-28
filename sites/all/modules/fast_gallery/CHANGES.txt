@@ -1,0 +1,8 @@
+// $Id;
+
+2009/11/30
+* Added Blocksupport
+* Tests extended
+
+2009/11/12
+* Extended API: Possibility to specify supported filetypes

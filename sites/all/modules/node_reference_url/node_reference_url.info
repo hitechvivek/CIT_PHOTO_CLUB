@@ -1,0 +1,17 @@
+name = Node Reference URL
+description = Defines a field formatter that provides a plain text URL to the referenced node.
+package = Fields
+core = 7.x
+dependencies[] = field
+dependencies[] = references
+dependencies[] = options
+dependencies[] = node_reference
+
+
+
+; Information added by drupal.org packaging script on 2011-10-20
+version = "7.x-1.0"
+core = "7.x"
+project = "node_reference_url"
+datestamp = "1319115335"
+

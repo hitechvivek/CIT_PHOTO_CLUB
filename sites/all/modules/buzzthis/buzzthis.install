@@ -1,0 +1,13 @@
+<?php
+// $Id: buzzthis.install,v 1.5.4.1 2010/09/19 21:40:39 jasonleon Exp $
+
+
+function buzzthis_update_7000() {
+	variable_del('buzzthis_button_style');
+  variable_del('buzzthis_post_count');
+  variable_del('buzzthis_button_size');
+  variable_del('buzzthis_button_weight');
+  variable_del('buzzthis_node_types');
+  variable_del('buzzthis_location');
+  variable_del('buzzthis_button_language');
+}

@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function node_reference_url_field_formatter_info() {
+  $ret = array(
+    'node_reference_url' => array(
+      'label'       => t('URL, as plain text'),
+      'description' => t('Display the URL of the referenced node plain text.'),
+      'field types' => array('node_reference'),
+    ),
+  );
+  return $ret;
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function node_reference_url_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $result = array();
+  if ($display['type'] == 'node_reference_url') {
+    foreach ($items as $delta => $item) {
+      if (isset($item['node'])) {
+        $node = $item['node'];
+        $alias = drupal_get_path_alias('node/'. $node->nid);
+        if ($item['access']) {
+          $result[$delta] = array(
+            '#markup' => check_plain($alias),
+          );
+        }
+      }
+    }
+ }
+  return $result;
+}

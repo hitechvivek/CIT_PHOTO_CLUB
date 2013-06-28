@@ -1,0 +1,116 @@
+<?php
+// $Id: gbuzz.install,v 1.1 2010/06/02 17:34:33 jasonleon Exp $
+
+/**
+ * Implementation of hook_schema.
+ */
+function gbuzz_schema() {
+  $schema['gbuzz_account'] = array(
+    'description' => t("Stores information on Gbuzz user accounts."),
+    'fields' => array(
+      'id' => array(
+        'description' => t("The unique Google Profile Identifier"),
+        'type' => 'numeric',
+        'unsigned' => TRUE,
+        'precision' => 22,
+        'scale' => 0,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'uid' => array(
+        'description' => t("The {users}.uid of the owner of this account"),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'kind' => array(
+        'description' => t('Kind'),
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'about' => array(
+        'description' => t('About Me'),
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'display_name' => array(
+        'description' => t('Profile Display Name'),
+        'type' => 'varchar',
+        'length' => 255,
+      ),
+      'profile_url' => array(
+        'description' => t("Profile URL."),
+        'type' => 'varchar',
+        'length' => 255
+      ),
+      'thumbnail_url' => array(
+        'description' => t("Thumbnail URL."),
+        'type' => 'varchar',
+        'length' => 255
+      ),
+      'oauth_token' => array(
+        'description' => t('The token_key for oauth-based access.'),
+        'type' => 'varchar',
+        'length' => 64,
+      ),
+      'oauth_token_secret' => array(
+        'description' => t('The token_secret for oauth-based access.'),
+        'type' => 'varchar',
+        'length' => 64,
+      ),
+      'emails' => array(
+        'description' => t('Email registered with buzz'),
+        'type' => 'text',
+        'size' => 'normal',
+      ),
+      'urls' => array(
+        'description' => t('URLs'),
+        'type' => 'text',
+        'size' => 'normal',
+      ),
+      'photos' => array(
+        'description' => t('Photos'),
+        'type' => 'text',
+        'size' => 'normal',
+      ),
+      'organizations' => array(
+        'description' => t('Organizations'),
+        'type' => 'text',
+        'size' => 'normal',
+      ),
+      'interests' => array(
+        'description' => t('Interests'),
+        'type' => 'text',
+        'size' => 'normal',
+      ),
+      'is_global' => array(
+        'description' => t('Boolean Flag indicating whether to use this account for global purpose'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0
+      ),
+      'import' => array(
+        'description' => t('Boolean Flag indicating whether buzz activity should be imported into the site'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1
+      ),
+    ),
+    'indexes' => array('uid' => array('uid')),
+    'primary key' => array('id'),
+
+  );
+
+  return $schema;
+}
+
+function gbuzz_install() {
+  drupal_install_schema('gbuzz');
+}
+
+function gbuzz_uninstall() {
+  drupal_uninstall_schema('gbuzz');
+}

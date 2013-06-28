@@ -1,0 +1,5 @@
+name = BEACON9 Social Integration
+description = Add re-tweet and facebook like buttons to appropriate nodes.
+core = 7.x
+version = "7.x-1.2"
+files[] = beacon9_social.module
